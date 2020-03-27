@@ -116,3 +116,17 @@ void ActionState::print(ostream& out) const {
         out << actionPreconditions[i]->name << endl;
     }
 }
+
+std::vector<double>  State::ReadState2Vector(){
+std::vector<double>  res;
+  for (unsigned int index = 0;
+         index < State::numberOfDeterministicStateFluents; ++index) {
+    res.push_back((double)deterministicStateFluents[index]);
+    }
+    for (unsigned int index = 0;
+         index < State::numberOfProbabilisticStateFluents; ++index) {
+              res.push_back( (double)probabilisticStateFluents[index] );
+    
+    }
+    return res;
+}

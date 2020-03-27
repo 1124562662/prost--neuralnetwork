@@ -2,6 +2,7 @@
 
 #include <cassert>
 
+#include "NN.h"
 #include "thts.h"
 
 #include "utils/math_utils.h"
@@ -53,8 +54,13 @@ ActionSelection* ActionSelection::fromString(std::string& desc, THTS* thts) {
                           ActionSelection
 ******************************************************************/
 
-int ActionSelection::selectAction(SearchNode* node) {
+int ActionSelection::selectAction(SearchNode* node,
+                                  std::vector<double> state_now) {
     bestActionIndices.clear();
+
+    this->state_now.clear();
+    this->state_now = state_now;
+    // cout<<"No. of actions"<<node->children.size()<<endl;
 
     if (node->numberOfVisits <= 1) {
         selectGreedyAction(node);
@@ -72,7 +78,6 @@ int ActionSelection::selectAction(SearchNode* node) {
     if (bestActionIndices.empty()) {
         _selectAction(node);
     }
-
     assert(!bestActionIndices.empty());
     int selectedIndex = MathUtils::rnd->randomElement(bestActionIndices);
 
@@ -217,6 +222,9 @@ void UCB1ActionSelection::_selectAction(SearchNode* node) {
         parentVisitPart *= std::log((double)node->numberOfVisits);
     }
 
+    // -------------
+    //   vector<double> predicted = this->mynn.predict(state_now);    
+    // -----------
     for (unsigned int childIndex = 0; childIndex < node->children.size();
          ++childIndex) {
         if (node->children[childIndex] &&
@@ -226,7 +234,16 @@ void UCB1ActionSelection::_selectAction(SearchNode* node) {
                 magicConstant *
                 std::sqrt(parentVisitPart /
                           (double)node->children[childIndex]->numberOfVisits);
+
+           // double NeuralNetworkPrior_scale =  50 / (double)node->children[childIndex]->numberOfVisits;
+
+         //  double NeuralNetworkPrior = predicted[childIndex];
+      
+
+            //cout<<"expected reward"<<node->children[childIndex]->getExpectedRewardEstimate()<<endl;
+
             double UCTValue =
+              //    NeuralNetworkPrior_scale * NeuralNetworkPrior +
                 node->children[childIndex]->getExpectedRewardEstimate() +
                 visitPart;
 
@@ -298,4 +315,3 @@ void ActionSelection::printStats(std::ostream& out, std::string indent) {
             << std::endl;
     }
 }
-

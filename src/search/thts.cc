@@ -5,7 +5,9 @@
 #include "initializer.h"
 #include "outcome_selection.h"
 #include "recommendation_function.h"
-
+#include "NNRollOut.h"
+#include "NN.cc"
+#include "NN.h"
 #include "utils/system_utils.h"
 
 /******************************************************************
@@ -38,10 +40,12 @@ THTS::THTS(std::string _name)
       accumulatedNumberOfStepsToGoInFirstSolvedRootState(0),
       firstSolvedFound(false),
       accumulatedNumberOfTrialsInRootState(0),
-      accumulatedNumberOfSearchNodesInRootState(0) {
+      accumulatedNumberOfSearchNodesInRootState(0) 
+      {
     setMaxNumberOfNodes(24000000);
     setTimeout(1.0);
     setRecommendationFunction(new ExpectedBestArmRecommendation(this));
+    
 }
 
 bool THTS::setValueFromString(std::string& param, std::string& value) {
@@ -389,7 +393,10 @@ void THTS::visitDecisionNode(SearchNode* node) {
     // Determine if we continue with this trial
     if (continueTrial(node)) {
         // Select the action that is simulated
-        appliedActionIndex = actionSelection->selectAction(node);
+
+        appliedActionIndex = actionSelection->selectAction(
+            node, states[stepsToGoInCurrentState].ReadState2Vector());
+
         assert(node->children[appliedActionIndex]);
         assert(!node->children[appliedActionIndex]->solved);
 
@@ -400,6 +407,19 @@ void THTS::visitDecisionNode(SearchNode* node) {
         // Sample successor state
         calcSuccessorState(states[stepsToGoInCurrentState], appliedActionIndex,
                            states[stepsToGoInNextState]);
+
+        // zzqzzq zzqzzq zzqzzq zzqzzq zzqzzq zzqzzq zzqzzq zzqzzq zzqzzq zzqzzq
+        // zzqzzq
+
+        // std::vector<int>
+        // zzq=getApplicableActions(states[stepsToGoInCurrentState]);
+        // std::cout<< "appl act size"<< zzq.size()<<std::endl;
+        // for (unsigned int index = 0;  index < zzq.size() ; ++index) {
+        //     std::cout<< zzq[index]<<" ;"<< std::endl;
+        // }
+
+        // zzqzzq zzqzzq zzqzzq zzqzzq zzqzzq zzqzzq zzqzzq zzqzzq zzqzzq zzqzzq
+        // zzqzzq
 
         // std::cout << "Sampled PDState is " << std::endl;
         // states[stepsToGoInNextState].printPDStateCompact(std::cout);
@@ -686,8 +706,9 @@ void THTS::printStats(std::ostream& out, bool const& printRoundStats,
 
     if (printRoundStats) {
         out << std::endl << indent << "ROUND FINISHED" << std::endl;
-        out << indent << "Accumulated number of remaining steps in first "
-                         "solved root state: "
+        out << indent
+            << "Accumulated number of remaining steps in first "
+               "solved root state: "
             << accumulatedNumberOfStepsToGoInFirstSolvedRootState << std::endl;
         out << indent << "Accumulated number of trials in root state: "
             << accumulatedNumberOfTrialsInRootState << std::endl;

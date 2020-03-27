@@ -7,6 +7,7 @@
 #include "utils/string_utils.h"
 #include "utils/system_utils.h"
 
+#include <fstream>
 #include <iostream>
 
 using namespace std;
@@ -105,6 +106,37 @@ vector<string> ProstPlanner::plan() {
     // Call the search engine
     vector<int> bestActions;
     searchEngine->estimateBestActions(currentState, bestActions);
+
+
+// zzqzzq zzqzzq zzqzzq zzqzzq zzqzzq zzqzzq zzqzzq zzqzzq zzqzzq zzqzzq zzqzzq
+    //   cout<<"current state zzq:"<<endl;
+    // currentState.printCompact(cout)   ;
+
+
+// cout<<"act"<<endl;
+//     for (size_t i=0;i<bestActions.size();++i)  {
+//     cout<<":"<<bestActions[i];}
+//     cout<<"               "<<endl;
+     
+  std::ofstream ofs;
+  ofs.open ("data.txt", std::ofstream::app);
+     string state_s="";
+       for (unsigned int index = 0;
+         index < State::numberOfDeterministicStateFluents; ++index) {
+        state_s+=std::to_string((int)currentState.deterministicStateFluent(index));
+    }
+    for (unsigned int index = 0;
+         index < State::numberOfProbabilisticStateFluents; ++index) {
+          state_s+=std::to_string((int)currentState.probabilisticStateFluent(index));}
+    ofs   << state_s   <<"\n";
+    ofs <<  bestActions[0]   <<"\n";
+     ofs.close();
+
+// zzqzzq zzqzzq zzqzzq zzqzzq zzqzzq zzqzzq zzqzzq zzqzzq zzqzzq zzqzzq zzqzzq
+
+
+
+
     chosenActionIndices[currentRound][currentStep] =
         MathUtils::rnd->randomElement(bestActions);
 

@@ -12,6 +12,8 @@
 #include "utils/math_utils.h"
 #include "utils/string_utils.h"
 #include "utils/system_utils.h"
+#include "NNRollOut.h"
+#include "NNRollOut.cc"
 
 using namespace std;
 
@@ -160,7 +162,15 @@ SearchEngine* SearchEngine::fromString(string& desc) {
     } else if (isConfig("IDS")) {
         desc = desc.substr(3, desc.size());
         result = new IDS();
-    } else if (isConfig("DFS")) {
+    }
+    //----------zzq--------------------------
+     else if (isConfig("NNRollOut")) {
+          desc = desc.substr(9, desc.size());
+           result = new NNRollOut();
+       
+    }
+    //----------zzq--------------------------
+    else if (isConfig("DFS")) {
         desc = desc.substr(3, desc.size());
         result = new DepthFirstSearch();
     } else if (isConfig("MLS")) {

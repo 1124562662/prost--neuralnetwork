@@ -1,7 +1,7 @@
 #include "initializer.h"
 
 #include "thts.h"
-
+#include "NNRollOut.h"
 #include "utils/math_utils.h"
 #include "utils/string_utils.h"
 #include "utils/system_utils.h"

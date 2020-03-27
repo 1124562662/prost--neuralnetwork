@@ -52,6 +52,7 @@ void IPCClient::run(string const& instanceName, string& plannerDesc) {
         while (true) {
             planner->initStep(nextState, remainingTime);
             vector<string> nextActions = planner->plan();
+        
             if (!submitAction(nextActions, nextState, immediateReward)) {
                 break;
             }
@@ -153,6 +154,8 @@ void IPCClient::initSession(string const& instanceName, string& plannerDesc) {
         SystemUtils::abort("Error: server response insufficient.");
     }
     numberOfRounds = atoi(s.c_str());
+    
+   
 
     if (!serverResponse->dissect("time-allowed", s)) {
         SystemUtils::abort("Error: server response insufficient.");

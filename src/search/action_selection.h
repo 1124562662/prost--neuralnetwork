@@ -1,10 +1,12 @@
 #ifndef ACTION_SELECTION_H
 #define ACTION_SELECTION_H
 
+#include "NN.h"
 #include <string>
 #include <vector>
 
 class THTS;
+
 class SearchNode;
 
 class ActionSelection {
@@ -40,7 +42,7 @@ public:
     virtual void initTrial() {}
 
     // Action selection
-    int selectAction(SearchNode* node);
+    int selectAction(SearchNode* node, std::vector<double> state_now);
     virtual void _selectAction(SearchNode* node) = 0;
 
     void selectGreedyAction(SearchNode* node);
@@ -50,16 +52,27 @@ public:
 
     // Prints statistics
     virtual void printStats(std::ostream& /*out*/, std::string /*indent*/);
+    std::vector<double> state_now;
 
 protected:
     ActionSelection(THTS* _thts)
-        : thts(_thts),
+        : thts(_thts),   
           selectLeastVisitedActionInRoot(false),
           maxVisitDiff(50),
           exploreInRoot(0),
-          exploitInRoot(0) {}
+          exploitInRoot(0)
+      {
+        std::vector<int> topology;
+       topology.push_back(11);
+             topology.push_back(8);
+              topology.push_back(6);
+               topology.push_back(5);
+        NN knn(topology, 0.08, true, 0.05);
+        this->mynn =knn;
+    }
 
     THTS* thts;
+    NN  mynn;
 
     // Vector for decision node children of equal quality
     std::vector<int> bestActionIndices;
@@ -96,7 +109,7 @@ public:
           magicConstantScaleFactor(1.0) {}
 
     // Set parameters from command line
-    bool setValueFromString(std::string& param, std::string& value);
+    bool setValueFromString(std::string& param, std::string& value) override;
 
     // Parameter setter
     virtual void setMagicConstantScaleFactor(double _magicConstantScaleFactor) {

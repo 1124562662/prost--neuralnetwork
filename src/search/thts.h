@@ -2,6 +2,7 @@
 #define THTS_H
 
 #include "search_engine.h"
+#include "NN.h"
 
 #include "utils/stopwatch.h"
 
@@ -10,6 +11,7 @@ class OutcomeSelection;
 class BackupFunction;
 class Initializer;
 class RecommendationFunction;
+class NN;
 
 // THTS, Trial-based Heuristic Tree Search, is the implementation of the
 // abstract framework described in the ICAPS 2013 paper "Trial-based Heuristic
@@ -145,7 +147,7 @@ public:
     void setRecommendationFunction(
         RecommendationFunction* _recommendationFunction);
 
-    void setMaxSearchDepth(int _maxSearchDepth);
+    void setMaxSearchDepth(int _maxSearchDepth) override;
     void setTerminationMethod(THTS::TerminationMethod _terminationMethod) {
         terminationMethod = _terminationMethod;
     }
@@ -184,7 +186,7 @@ public:
     // Print
     void printStats(std::ostream& out, bool const& printRoundStats,
                     std::string indent = "") const override;
-
+    
 private:
     // Main search functions
     void visitDecisionNode(SearchNode* node);
@@ -219,6 +221,7 @@ private:
     BackupFunction* backupFunction;
     Initializer* initializer;
     RecommendationFunction* recommendationFunction;
+ 
 
     // Search nodes used in trials
     SearchNode* currentRootNode;

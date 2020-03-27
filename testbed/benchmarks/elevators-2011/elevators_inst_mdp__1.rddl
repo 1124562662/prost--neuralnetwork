@@ -9,6 +9,9 @@ non-fluents nf_elevators_inst_mdp__1 {
 		ELEVATOR-PENALTY-WRONG-DIR = 3.0;
 		ADJACENT-UP(f0,f1) = true;
 		ARRIVE-PARAM(f1) = 0.14635538;
+
+		ARRIVE-PARAM(f0) = 0.14635538;
+		
 		ADJACENT-UP(f1,f2) = true;
 		TOP-FLOOR(f2) = true;
 		BOTTOM-FLOOR(f0) = true;
